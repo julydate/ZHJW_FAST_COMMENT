@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ZHJW_FAST_COMMENT
 // @namespace    http://tampermonkey.net/
-// @version      0.4
+// @version      0.5
 // @description  SCU教务系统快速评教插件（非一键评教）| 帮助你快速填写评价，免去繁琐的选项与文字输入 | 请不要使用“兼容模式”
 // @author       Julydate
 // @match        http://202.115.47.141/loginAction.do
@@ -33,7 +33,8 @@
                     "	<input type='button' value='4级' onclick='checkList(4)' /> \n" +
                     "	<input type='button' value='5级' onclick='checkList(5)' /> \n" +
                     "	<input type='button' value='随机生成评价' onclick='writeComment()' /> \n" +
-                    " 	<input type='button' value='提交' onclick='mainHtml.check()' /> \n" +
+					" 	<input type='button' value='提交' onclick='mainHtml.check()' /> \n" +
+					" 	<input type='button' value='BUG反馈' onclick='window.open(\"https://github.com/smarterq/ZHJW_FAST_COMMENT/issues/new\",\"_blank\")' /> \n" +
                     "</div> \n";
                 setBox.appendChild(Container);
             }
@@ -48,15 +49,18 @@
 					"//填写问卷内容 \n" +
 					"function checkList(num) { \n" +
 					"	var num \n" +
-					"	if(num == '1')var numValue = '10_1'; \n" +
-					"	if(num == '2')var numValue = '10_0.8'; \n" +
-					"	if(num == '3')var numValue = '10_0.6'; \n" +
-					"	if(num == '4')var numValue = '10_0.4'; \n" +
-					"	if(num == '5')var numValue = '10_0.2'; \n" +
+					"	if(num == '1'){var numValue = '10_1';var stuValue = '0';} \n" +
+					"	if(num == '2'){var numValue = '10_0.8';var stuValue = '0';} \n" +
+					"	if(num == '3'){var numValue = '10_0.6';var stuValue = '0';} \n" +
+					"	if(num == '4'){var numValue = '10_0.4';var stuValue = '10_0.3';} \n" +
+					"	if(num == '5'){var numValue = '10_0.2';var stuValue = '10_0';} \n" +
 					"	var allInputs = mainHtml.document.getElementsByTagName('input'); \n" +
-					"	for(var x = 0 ; x < allInputs.length ; x++) \n" +
+					"	for(var x = 0 ; x < allInputs.length ; x++){ \n" +
 					"		if(allInputs[x].value == numValue) \n" +
 					"			allInputs[x].checked = true; \n" +
+					"		if(allInputs[x].value == stuValue) \n" +
+					"			allInputs[x].checked = true; \n" +
+					"	} \n" +
 					"} \n" +
 					"//填写主观评价 \n" +
 					"function writeComment() { \n" +
