@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         ZHJW_FAST_COMMENT
 // @namespace    http://tampermonkey.net/
-// @version      0.5
+// @version      0.6
 // @description  SCU教务系统快速评教插件（非一键评教）| 帮助你快速填写评价，免去繁琐的选项与文字输入 | 请不要使用“兼容模式”
 // @author       Julydate
-// @match        http://202.115.47.141/loginAction.do
-// @match        http://zhjw.scu.edu.cn/loginAction.do
+// @match        http://202.115.47.141/student/teachingEvaluation
+// @match        http://zhjw.scu.edu.cn/student/teachingEvaluation
+// @match        http://202.115.47.141/student/teachingEvaluation/teachingEvaluation/evaluationPage
 // @grant        none
 // ==/UserScript==
 
@@ -20,32 +21,32 @@
         }
 		//注入评教框
         function showBox() {
-            if (document.getElementsByTagName("frame")[0].contentWindow.document.getElementById("sp-pj-container") === null) {
-                var setBox = document.getElementsByTagName("frame")[0].contentWindow.document.getElementsByTagName("table")[0];
+            if (document.getElementById("sp-pj-container") === null) {
+                var setBox = document.getElementById("breadcrumbs");
                 var Container = document.createElement('div');
                 Container.id = "sp-pj-container";
-                Container.style = "top: 10%;right: 10%;position: fixed !important;background-color: #0072ff59;padding: 5px;z-index: 9999999;";
+                Container.style = "top: 44px;right: 30px;position: fixed !important;z-index: 9999999;";
                 Container.innerHTML =
                     "<div id='sp-py-content' style='display: block;'> \n" +
-                    "	<input type='button' value='1级' onclick='checkList(1)' /> \n" +
-                    "	<input type='button' value='2级' onclick='checkList(2)' /> \n" +
-                    "	<input type='button' value='3级' onclick='checkList(3)' /> \n" +
-                    "	<input type='button' value='4级' onclick='checkList(4)' /> \n" +
-                    "	<input type='button' value='5级' onclick='checkList(5)' /> \n" +
-                    "	<input type='button' value='随机生成评价' onclick='writeComment()' /> \n" +
-					" 	<input type='button' value='提交' onclick='mainHtml.check()' /> \n" +
-					" 	<input type='button' value='BUG反馈' onclick='window.open(\"https://github.com/smarterq/ZHJW_FAST_COMMENT/issues/new\",\"_blank\")' /> \n" +
+                    "	<button class='btn btn-info btn-round' value='1级' onclick='checkList(1);' style='height: 30px;line-height: 10px;'>1级</button> \n" +
+                    "	<button class='btn btn-info btn-round' value='2级' onclick='checkList(2);' style='height: 30px;line-height: 10px;'>2级</button> \n" +
+                    "	<button class='btn btn-info btn-round' value='3级' onclick='checkList(3);' style='height: 30px;line-height: 10px;'>3级</button> \n" +
+                    "	<button class='btn btn-info btn-round' value='4级' onclick='checkList(4);' style='height: 30px;line-height: 10px;'>4级</button> \n" +
+                    "	<button class='btn btn-info btn-round' value='5级' onclick='checkList(5);' style='height: 30px;line-height: 10px;'>5级</button> \n" +
+                    "	<button class='btn btn-info btn-round' value='随机生成评价' onclick='writeComment();' style='height: 30px;line-height: 10px;'>随机生成评价</button> \n" +
+					" 	<button class='btn btn-danger btn-round' value='提交' onclick='toEvaluation();' style='height: 30px;line-height: 10px;'>提交</button> \n" +
+					" 	<button class='btn btn-info btn-round' value='BUG反馈' onclick='window.open(\"https://github.com/smarterq/ZHJW_FAST_COMMENT/issues/new\",\"_blank\");' style='height: 30px;line-height: 10px;'>BUG反馈</button> \n" +
                     "</div> \n";
                 setBox.appendChild(Container);
             }
         }
 		//注入脚本
 		function insertScript() {
-			var jsBox = document.getElementsByTagName("frame")[0].contentWindow.document.getElementsByTagName("table")[0];
+            var jsBox = document.getElementById("breadcrumbs");
 			var Scriptbox = document.createElement('script');
 			Scriptbox.text =
-					"//定义主运行位置 \n" +
-					"var mainHtml = self.parent.document.getElementsByTagName('frame')[1].contentWindow.document.getElementsByName('mainFrame')[0].contentWindow; \n" +
+					"//修改提交参数 \n" +
+					"var flag = true; \n" +
 					"//填写问卷内容 \n" +
 					"function checkList(num) { \n" +
 					"	var num \n" +
@@ -54,7 +55,7 @@
 					"	if(num == '3'){var numValue = '10_0.6';var stuValue = '0';} \n" +
 					"	if(num == '4'){var numValue = '10_0.4';var stuValue = '10_0.3';} \n" +
 					"	if(num == '5'){var numValue = '10_0.2';var stuValue = '10_0';} \n" +
-					"	var allInputs = mainHtml.document.getElementsByTagName('input'); \n" +
+					"	var allInputs = document.getElementsByTagName('input'); \n" +
 					"	for(var x = 0 ; x < allInputs.length ; x++){ \n" +
 					"		if(allInputs[x].value == numValue) \n" +
 					"			allInputs[x].checked = true; \n" +
@@ -76,7 +77,7 @@
 					"		'激发了我的学习兴趣并且能够清晰地解答我的疑问' \n" +
 					"	] \n" +
 					"	var commentText = comments[Math.floor(Math.random()*comments.length)]; \n" +
-					"	var comment = mainHtml.document.getElementsByName('zgpj'); \n" +
+					"	var comment = document.getElementsByName('zgpj'); \n" +
 					"	comment[0].value = commentText; \n" +
 					"} \n";
 					jsBox.appendChild(Scriptbox);
